@@ -1,49 +1,33 @@
-# Day 1 LLM Practical Assignments
+# Day 1 – First API Integration with EduPredict AI 🤖
 
-## Project Overview
+## Project: EduPredict AI
+**AI-Powered University Admission Web Application**
 
-**EduPredictAI** is an AI-based student performance prediction project. It uses historical student academic data and marks to predict student outcomes and help educators identify students who may need additional support.
+### 📌 Objective
 
-This practical explores how Large Language Models (LLMs) work and how to connect them using an API.
+The objective of Day 1 was to understand how to connect a Python application with an AI model using the Groq API and build a basic AI assistant for the EduPredict AI project.
 
-## Technologies Used
+We learned how to send questions to an AI model, receive responses, control its behavior using system prompts, and measure token usage.
 
-- Python
-- Google Colab
-- Groq API
-- OpenAI Python Library
-- Large Language Models (LLMs)
+---
 
-## Setup Instructions
+## 1. Technologies Used
 
-### 1. Open Google Colab
+- **Python** – Programming language
+- **Google Colab** – Development environment
+- **Groq API** – AI model API provider
+- **OpenAI Python Library** – API client
+- **GPT-OSS-20B** – AI model (`openai/gpt-oss-20b`)
 
-Visit [Google Colab](https://colab.research.google.com/) and create a new notebook.
+## 2. API Setup and Authentication
 
-### 2. Install the required library
+Installed the OpenAI-compatible Python library:
 
 ```python
 !pip install -q openai
 ```
 
-### 3. Create a Groq API Key
-
-1. Visit [Groq Console](https://console.groq.com/keys).
-2. Sign in to your account.
-3. Create a new API key.
-4. Copy the generated key.
-
-### 4. Add the API Key to Google Colab
-
-1. Open the Secrets section using the key icon in Colab.
-2. Click Add new secret.
-3. Set the name as `GROQ_API_KEY`.
-4. Paste your Groq API key into the value field.
-5. Enable notebook access.
-
-**Security:** Never expose your API key in source code or upload it to GitHub.
-
-### 5. Connect to the Groq API
+Retrieved the Groq API key securely from Google Colab Secrets.
 
 ```python
 from google.colab import userdata
@@ -54,103 +38,172 @@ client = OpenAI(
     base_url="https://api.groq.com/openai/v1"
 )
 
-MODEL = "openai/gpt-oss-20b"
-
-print("EduPredictAI API connected successfully!")
+print("API client connected successfully!")
 ```
 
-## Day 1 – Practical Tasks
+**What we learned:**
+- How to install and import the required library.
+- How to securely access API keys.
+- How to initialize an API client.
+- How to connect Python with Groq.
 
-### Task 1: Temperature Experiment
+## 3. First API Call
 
-**Objective:** Understand how temperature affects AI-generated responses.
+Created the first API request using the chat completions endpoint.
 
-- Generate three EduPredictAI taglines using temperature 0.2.
-- Generate another three taglines using temperature 1.2.
-- Compare the responses.
+```python
+response = client.chat.completions.create(
+    model="openai/gpt-oss-20b",
+    messages=[
+        {
+            "role": "system",
+            "content": "You are EduPredict AI, an intelligent academic assistant."
+        },
+        {
+            "role": "user",
+            "content": "What is EduPredict AI and how does it help universities?"
+        }
+    ]
+)
 
-**Learning:** Low temperature generally produces more predictable responses, while high temperature allows more variation and creativity.
+print(response.choices[0].message.content)
+```
 
-### Task 2: Hallucination Experiment
+**What we learned:**
+- System messages define the AI's behavior.
+- User messages contain questions.
+- API requests send messages to the model.
+- The response object contains the generated answer.
 
-**Objective:** Understand AI hallucinations.
+## 4. EduPredict AI System Prompt
 
-Ask the chatbot:
+Created a custom system prompt to give the AI assistant information about our project.
 
-> Does EduPredictAI guarantee that every student will pass?
+The assistant was configured to understand these four core modules:
 
-Observe whether the AI generates unsupported claims.
+1. **GPA & Academic Performance Prediction** – Forecast student academic performance.
+2. **Academic Branch Recommendation** – Recommend suitable academic branches.
+3. **Scholarship Eligibility** – Evaluate merit-based and need-based scholarship eligibility.
+4. **Analytics Dashboard** – Visualize student performance and institutional insights.
 
-**Learning:** AI can produce incorrect or unsupported information when it does not have sufficient facts.
+### Technology Stack Included
 
-### Task 3: No Memory Experiment
+- Frontend: React.js, Vite, JavaScript, Tailwind CSS and Recharts.
+- Backend: Python and FastAPI.
+- Database: MongoDB.
+- Machine Learning: Scikit-learn.
+- Data Processing: Pandas and NumPy.
 
-**Objective:** Understand how API conversation memory works.
+The system prompt also included rules to avoid unsupported information and explain concepts in simple English.
 
-Experiment A:
-- First API call: My name is Ravi.
-- Second API call: What is my name?
+## 5. Temperature Testing
 
-Experiment B:
-- Send both messages together in a single messages list.
-- Check whether the AI identifies the name.
+Tested different temperature values to understand how they affect AI responses.
 
-**Learning:** Separate API calls do not automatically remember previous conversations. Conversation history must be provided again.
+```python
+for temp in [0.2, 1.2]:
 
-### Task 4: Token Experiment
+    response = client.chat.completions.create(
+        model="openai/gpt-oss-20b",
+        temperature=temp,
+        messages=[
+            {"role": "system", "content": SYSTEM},
+            {
+                "role": "user",
+                "content": "Explain why EduPredict AI is useful for universities."
+            }
+        ]
+    )
 
-**Objective:** Compare token usage in English and Telugu.
+    print("Temperature:", temp)
+    print(response.choices[0].message.content)
+```
 
-- Ask the same EduPredictAI-related question in English.
-- Ask the same question in Telugu.
-- Compare `response.usage.prompt_tokens`.
+**Learning:**
+- 0.2 produces more focused and consistent responses.
+- 1.2 allows more variation and creativity.
 
-**Learning:** Different languages may consume different numbers of tokens for the same meaning.
+## 6. Hallucination Testing
 
-### Task 5: Build an EduPredictAI Chatbot
+Tested whether the assistant generates unsupported information.
 
-**Objective:** Create a project-specific chatbot using facts and rules.
+Example question:
 
-#### Five Project Facts
+"Does EduPredict AI currently support face recognition attendance?"
 
-1. EduPredictAI is an AI-based student performance prediction project.
-2. It uses historical student academic data and marks.
-3. It predicts three outcomes: Pass, Fail, and Dropout.
-4. It provides an interactive dashboard for educators.
-5. It helps educators identify at-risk students and provide support.
+Expected behavior:
 
-#### Three Chatbot Rules
+The assistant should explain that this information is not available in the project details instead of inventing an answer.
 
-1. Answer questions in simple and understandable English.
-2. Do not invent project features or unsupported information.
-3. Never guarantee student results. Predictions are only guidance.
+## 7. Conversation Memory Testing
 
-Test the chatbot using three questions:
+Tested the difference between separate API calls and conversation history.
 
-1. What is EduPredictAI?
-2. How does EduPredictAI identify at-risk students?
-3. Can EduPredictAI guarantee that every student will pass?
+- Separate API calls do not automatically remember previous messages.
+- Including previous messages in the `messages` list allows the model to use conversation history.
 
-## Learning Outcomes
+This helped us understand how conversational context works in AI applications.
 
-After completing these experiments, I learned:
+## 8. Token Usage
 
-- How Large Language Models generate responses.
-- How temperature affects AI creativity.
-- What hallucinations are and why they occur.
-- Why separate API calls do not automatically remember previous messages.
-- How token usage changes between languages.
-- How to build a simple AI chatbot using project-specific facts and rules.
+Learned how to check the number of tokens consumed by an API request.
 
-## Conclusion
+```python
+print("Prompt Tokens:", response.usage.prompt_tokens)
+print("Completion Tokens:", response.usage.completion_tokens)
+print("Total Tokens:", response.usage.total_tokens)
+```
 
-This practical helped me understand the basic concepts of Large Language Models and API integration. I also created a simple EduPredictAI chatbot using Python and the Groq API.
+**Learning:**
+- Prompt tokens represent input processed by the model.
+- Completion tokens represent generated output.
+- Total tokens represent the combined usage.
 
-The experiments provided practical knowledge about AI response generation, memory, token usage, hallucinations, and chatbot development.
+## 9. Important Concepts Learned
+
+| Concept | Description |
+|---|---|
+| API | Allows applications to communicate with external services. |
+| API Key | Used for authentication. |
+| OpenAI Client | Python library for making compatible API requests. |
+| System Prompt | Defines AI behavior and instructions. |
+| User Prompt | Contains the user's question. |
+| Temperature | Controls response randomness. |
+| Hallucination | Generating unsupported or incorrect information. |
+| Conversation Memory | Providing previous messages as context. |
+| Token Usage | Measures input and output tokens. |
+
+## 10. Project Application
+
+The knowledge gained on Day 1 will be used to develop an AI-powered assistant for EduPredict AI.
+
+The assistant will eventually support:
+- Explaining student academic performance predictions.
+- Answering questions about branch recommendations.
+- Explaining scholarship eligibility criteria.
+- Providing information about the project.
+- Supporting students, administrators and academic counselors.
+
+**Note:** This Day 1 implementation is an API-based assistant prototype. It is not yet connected to the actual student database or trained prediction models.
 
 ---
 
-**Project:** EduPredictAI  
-**Practical:** Day 1 – How LLMs Work and Your First API Call  
-**Language:** Python  
-**Platform:** Google Colab
+## 🎯 Day 1 Learning Outcomes
+
+Successfully explored the fundamentals of AI API integration using Python and Groq.
+
+- Connected Python with Groq API.
+- Created the first AI API request.
+- Built a custom EduPredict AI system prompt.
+- Explored temperature settings.
+- Tested hallucination prevention.
+- Understood conversation history.
+- Checked API token usage.
+
+### Conclusion
+
+Day 1 provided a foundation for integrating Large Language Models (LLMs) into EduPredict AI. These concepts will help us gradually develop a more intelligent academic assistance system.
+
+**Project:** EduPredict AI  
+**Focus:** Python, AI API Integration and Prompt Engineering  
+**Repository:** Davidsudheerkumar/EduPredictAI
