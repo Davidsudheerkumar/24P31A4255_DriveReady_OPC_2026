@@ -1,169 +1,107 @@
-# Day 4 – EduPredictAI Student Support Agent
+# Day 4 – EduPredictAI Agent with Tools
 
-## Overview
+## Project Overview
 
-Day 4 focuses on building an AI agent using LangChain tools, structured output, Pydantic validation, and Google Sheets integration.
+Day 4 focuses on building an AI-powered university admission assistant using LangChain, Groq, Pydantic and Google Sheets.
 
-For this practical task, I adapted the Sweet Crumbs Home Bakery tutorial into my own project, **EduPredictAI**.
-
-EduPredictAI is an AI-powered student academic support assistant that helps teachers understand student performance, calculate marks percentages, classify academic results, and store student records.
-
-## Objectives
-
-- Understand how AI agents use tools.
-- Create custom tools using LangChain's `@tool` decorator.
-- Define structured student records using Pydantic.
-- Extract student information from unstructured messages.
-- Connect Google Sheets using `gspread`.
-- Save student academic records automatically.
-- Build an AI agent using LangChain's `create_agent`.
-- Understand tool selection and agent execution traces.
+The EduPredictAI agent helps universities manage student admission enquiries, calculate academic percentages, classify student performance and store admission records.
 
 ## Technologies Used
 
 - Python
-- Google Colab
 - LangChain
 - LangChain Groq
-- Groq LLM – `openai/gpt-oss-20b`
 - Pydantic
+- Google Colab
 - Google Sheets
 - gspread
 
-## Project Structure
+## Tasks Completed
 
-```text
-Day-4/
-│
-├── EduPredictAI_Day4.ipynb
-└── README.md
-```
+### 1. Creating Custom Tools with @tool
 
-## Implementation
+Converted two existing Python homework functions into LangChain tools.
 
-### 1. Environment Setup
+- `calculate_percentage()` – Calculates student academic percentage.
+- `classify_performance()` – Classifies student performance into Pass, Fail or Dropout.
 
-Installed the required Python packages:
+Added clear function names, type hints and docstrings to help the AI agent select the correct tools.
 
-- langchain
-- langchain-groq
-- gspread
-- pydantic
+### 2. Creating a Pydantic Model
 
-Configured the Groq API key using Google Colab Secrets and initialized the language model.
+Created an `AdmissionEnquiry` Pydantic class to represent university admission enquiries.
 
-Connected Google Colab to Google Sheets for storing student records.
+The model contains:
 
-### 2. Student Data Model
+- Student Name
+- Program / Branch
+- Previous Academic Percentage
+- Entrance Examination Score
+- Enquiry Date
+- Admission Question
 
-Created a Pydantic model named `StudentRecord`.
+### 3. Structured Output Testing
 
-It contains the following fields:
+Used `llm.with_structured_output(AdmissionEnquiry)` to convert normal student messages into structured Python objects.
 
-- Name
-- Subject
-- Marks
-- Attendance
-- Date
-- Academic concern
+Tested the model with five different student messages containing admission information.
 
-Pydantic helps validate the extracted student information.
+### 4. Google Sheets Integration
 
-### 3. Custom LangChain Tools
+Connected Google Sheets using `gspread` and Google authentication.
 
-Created three custom tools using the `@tool` decorator.
+Created a spreadsheet named **EduPredictAI Admission Enquiries** to store student admission information.
 
-**Tool 1: calculate_percentage**
+### 5. Creating the Logging Tool
 
-Calculates the percentage of marks obtained by a student.
+Created `log_admission_enquiry()` using LangChain's `@tool`.
 
-**Tool 2: classify_performance**
+This tool:
 
-Classifies student performance using the following rules:
+- Validates admission information using Pydantic.
+- Checks the required student details.
+- Saves complete admission enquiries to Google Sheets.
+- Returns a confirmation message after saving.
 
-| Score | Classification |
-|---|---|
-| 0 | Dropout |
-| 1–9 | Fail |
-| 10–20 | Pass |
+### 6. Tool Description Experiment
 
-**Tool 3: log_student_record**
+Renamed one tool to `tool1` and changed its docstring to `"does stuff"`.
 
-Validates and saves student academic records into Google Sheets.
+Compared the vague tool description with the original descriptive tool name and docstring.
 
-### 4. Structured Output
+Observed how clear tool descriptions help improve tool selection.
 
-Used `with_structured_output(StudentRecord)` to extract student details from unstructured text messages.
+Restored the original descriptive tool.
 
-Tested the structured output using five different student messages.
+### 7. Reading the Agent Trace
 
-### 5. Google Sheets Integration
-
-Connected the application to Google Sheets using `gspread`.
-
-Created a spreadsheet named:
-
-`EduPredictAI Student Records`
-
-The spreadsheet stores:
-
-- Student name
-- Subject
-- Marks
-- Attendance
-- Date
-- Academic concern
-- Performance classification
-
-### 6. AI Agent Creation
-
-Created an AI agent using LangChain's `create_agent`.
-
-The agent uses the three custom tools to calculate percentages, classify performance, and save confirmed student records.
-
-Added a system prompt with instructions to provide simple responses and avoid inventing student information.
-
-### 7. Tool Description Experiment
-
-Created a temporary tool named `tool1` with the description `"does stuff"`.
-
-Tested how an unclear tool name and description affect the agent's tool selection.
-
-Compared it with descriptive tool names and docstrings.
-
-### 8. Agent Execution Trace
-
-Used `pretty_print()` to inspect the agent's execution messages.
+Used `pretty_print()` to inspect the complete agent execution process.
 
 Counted:
-
-- Total model calls
-- Total tool calls
-
-This helped understand how the agent processes user requests and executes tools.
-
-## Sample Test Cases
-
-1. Calculate the percentage for 450 marks out of 500.
-2. Classify a student who scored 15 out of 20.
-3. Calculate the percentage for a student who scored 7 out of 20 and classify the result.
-4. Extract student information from a natural-language message.
-5. Save a confirmed student record into Google Sheets.
+- Model calls
+- Tool calls
+- Tool execution results
+- Final AI response
 
 ## Learning Outcomes
 
-After completing Day 4, I learned:
+- Creating custom LangChain tools using `@tool`.
+- Writing clear tool names and docstrings.
+- Creating Pydantic data models.
+- Generating structured LLM output.
+- Connecting Python applications with Google Sheets.
+- Creating AI agents using `create_agent()`.
+- Understanding tool selection and agent execution traces.
+- Handling tool errors and validating student information.
 
-- How to create custom LangChain tools.
-- How an AI agent selects and executes tools.
-- How to use Pydantic for structured data validation.
-- How to extract structured information from natural-language messages.
-- How to connect Google Sheets with Python.
-- How to save records using an AI agent.
-- How to inspect and count model and tool calls.
+## Business Application
+
+EduPredictAI provides an AI-powered admission enquiry management system for universities.
+
+It helps organize student information, process academic details and maintain admission records using AI and Python.
 
 ## Conclusion
 
-In Day 4, I developed an EduPredictAI Student Support Agent by applying LangChain tools, structured output, Pydantic validation, and Google Sheets integration.
+Successfully prepared the Day 4 practical implementation of an EduPredictAI admission assistant using LangChain tools, Pydantic structured output and Google Sheets integration.
 
-This practical helped me understand how AI agents can perform useful tasks by combining language models with external tools and structured data.
+This project demonstrates how AI agents can automate university admission enquiry management and academic information processing.
