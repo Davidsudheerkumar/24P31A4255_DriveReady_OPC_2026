@@ -1,218 +1,129 @@
-# EduPredictAI – Day 3: Your First AI Agent
+# Day 4 – EduPredictAI: LangChain Assistant
 
 ## Project Overview
 
-This project is part of the **AI Agents Workshop – Day 3** practical.
+EduPredictAI is an AI-powered university admission and academic decision-support assistant. It helps universities analyze student academic information, predict academic performance, recommend suitable branches, identify students needing academic support, and support scholarship screening.
 
-In this task, I created an AI assistant called **EduPredictAI** using LangChain and the Groq API. The assistant helps teachers and college administrators understand student academic performance in simple English.
-
-The practical focuses on understanding LLMs, system prompts, prompt chains, testing, and temperature experiments.
-
-## Objectives
-
-- Understand what an AI agent is.
-- Create a system prompt for EduPredictAI.
-- Connect a Large Language Model (LLM) using Groq.
-- Build a prompt chain using LangChain.
-- Create 10 test questions in a CSV file.
-- Evaluate the AI assistant using automated tests.
-- Improve the system prompt and compare results.
-- Experiment with different temperature settings.
-- Understand the difference between Python code, an LLM call, and an AI agent.
+On Day 4, I used LangChain and the Groq LLM to build a basic EduPredictAI assistant and test its responses.
 
 ## Technologies Used
 
-| Technology | Purpose |
-|---|---|
-| Python | Programming language |
-| Google Colab | Cloud coding environment |
-| LangChain | Prompt and chain creation |
-| Groq API | Access to the AI model |
-| GPT-OSS-20B | Language model |
-| CSV | Store test questions and expected keywords |
+- Python
+- Google Colab
+- LangChain
+- LangChain-Groq
+- Groq API
+- CSV for testing
 
-## Project Structure
+## 1. Your Business – EduPredictAI SYSTEM Prompt
 
-```text
-EduPredictAI-Day3/
-│
-├── EduPredictAI_Day3.ipynb
-├── tests.csv
-└── README.md
-```
-
-## Implementation Steps
-
-### 1. Install Required Packages
-
-Installed LangChain Groq integration.
-
-```python
-%pip install -q langchain-groq
-```
-
-### 2. Import Libraries
-
-Imported the required libraries for model connection, prompt creation, output parsing, and CSV testing.
-
-```python
-import os
-import csv
-import getpass
-
-from langchain_groq import ChatGroq
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.output_parsers import StrOutputParser
-```
-
-### 3. Configure Groq API Key
-
-Configured the Groq API key securely in Google Colab.
-
-### 4. Create the AI Model
-
-Created the language model using Groq.
-
-```python
-llm = ChatGroq(
-    model="openai/gpt-oss-20b",
-    temperature=0.3
-)
-```
-
-### 5. Create the SYSTEM Prompt
-
-Defined the system prompt to explain the responsibilities and rules of EduPredictAI.
+Created a custom SYSTEM prompt for EduPredictAI instead of using the Sweet Crumbs bakery example.
 
 The assistant is designed to:
+- Answer university admission-related questions.
+- Explain student academic performance prediction.
+- Recommend suitable academic branches.
+- Identify students who may need academic support.
+- Explain merit-based and financial-need-based scholarships.
 
-- Explain student academic performance.
-- Explain Pass, Fail, and Dropout predictions.
-- Help identify students who may need academic support.
-- Provide clear explanations in simple English.
-- Avoid inventing student marks or results.
-- Remind teachers that predictions are estimates.
+Added rules to prevent the assistant from inventing student records or guaranteeing admission and scholarships.
 
-### 6. Create the Prompt Chain
+## 2. Your Tests – tests.csv
 
-Used LangChain to connect the system prompt, user question, language model, and output parser.
+Created a CSV file containing 10 customer questions and their expected keywords.
 
-```python
-prompt = ChatPromptTemplate.from_messages([
-    ("system", SYSTEM),
-    MessagesPlaceholder("history"),
-    ("human", "{question}")
-])
+| No. | Customer Question | Must Include |
+|---|---|---|
+| 1 | What is EduPredictAI? | university |
+| 2 | How does EduPredictAI help students? | academic |
+| 3 | Can EduPredictAI predict student performance? | performance |
+| 4 | Does EduPredictAI recommend branches? | branch |
+| 5 | Does it support scholarships? | scholarship |
+| 6 | What is academic performance prediction? | predict |
+| 7 | Can it identify students needing support? | support |
+| 8 | Does EduPredictAI provide reports? | reports |
+| 9 | Can it guarantee admission? | guarantee |
+| 10 | Does EduPredictAI make final admission decisions? | final |
 
-chain = prompt | llm | StrOutputParser()
-```
-
-### 7. Test the AI Assistant
-
-Asked EduPredictAI:
-
-**Question:** What is EduPredictAI and how does it help teachers?
-
-The assistant generates an answer based on the system prompt.
-
-### 8. Create the Test Dataset
-
-Created a `tests.csv` file containing 10 questions and their expected keywords.
-
-Example:
-
-| Question | Expected keyword |
-|---|---|
-| What is EduPredictAI? | student |
-| What is its main purpose? | performance |
-| Which categories can it predict? | Pass |
-| How does it help teachers? | students |
-| What type of data does it use? | historical |
-| Can it identify students needing support? | support |
-| Does it guarantee 100% accuracy? | estimate |
-| Who can use EduPredictAI? | teachers |
-| What does Dropout mean? | Dropout |
-| What should teachers do after predictions? | review |
-
-### 9. Run Automated Tests
-
-Created a `run_tests()` function to:
-
-- Read questions from `tests.csv`.
-- Send each question to the AI assistant.
-- Compare the generated answer with the expected keyword.
+Implemented a Python testing function to:
+- Read questions from tests.csv.
+- Send each question to the LangChain model.
+- Check whether the expected keyword appears in the answer.
 - Display PASS or FAIL.
 - Calculate the overall pass rate.
 
-**Pass Rate Formula:**
+## 3. Improve – Prompt Improvement
 
-```text
-Pass Rate = (Passed Tests / Total Tests) × 100
-```
+Created an improved SYSTEM prompt (Prompt V2).
 
-### 10. Improve the System Prompt
+Changes made:
+- Added explanations for academic predictions.
+- Added instructions to mention insufficient information.
+- Improved accuracy and reliability rules.
+- Added human review recommendations for important decisions.
+- Improved the assistant's response instructions.
 
-Added additional instructions to explain Pass, Fail, and Dropout clearly and remind teachers to verify predictions.
+Ran the same 10 tests again and compared Prompt V1 and Prompt V2 using their pass rates.
 
-Rebuilt the prompt chain and ran the tests again to compare the original and improved pass rates.
+**Observation:** The actual improvement is evaluated using the test results.
 
-### 11. Temperature Experiment
+## 4. Switch – Temperature Experiment
 
-Changed the model temperature from `0.3` to `1.0`.
+Changed the model temperature from 0.3 to 1.0.
 
-```python
-llm_temp1 = ChatGroq(
-    model="openai/gpt-oss-20b",
-    temperature=1.0
-)
-```
+Tested the same question twice:
 
-Ran the same tests twice to observe whether the generated answers and test results changed.
+"Explain how EduPredictAI helps universities."
 
-**Observation:** Higher temperature can produce more varied responses. The actual pass rate may differ between runs.
+Compared both AI-generated responses.
 
-## Business Job Classification
+**Observation:**
+- Temperature 0.3 generally produces more consistent responses.
+- Temperature 1.0 allows more variation and creativity.
+- The two responses may differ in wording and explanation.
 
-| Business Job | Type |
-|---|---|
-| Calculate student marks percentage | Plain Python Code |
-| Explain student performance reports | One LLM Call |
-| Analyze records, identify missing information, retrieve records, and prepare support recommendations | AI Agent |
+## 5. Agent or Not – Task Classification
+
+Identified three jobs in EduPredictAI and classified them.
+
+| Job | Category | Explanation |
+|---|---|---|
+| Calculate student percentage | Plain Code | Uses mathematical calculations. |
+| Explain student performance prediction | One LLM Call | Uses an LLM to generate an explanation. |
+| Analyze student records, identify support needs and prepare reports using tools | Agent | Uses multiple steps and tools to complete a task. |
+
+## Project Workflow
+
+1. Install LangChain and LangChain-Groq.
+2. Connect the Groq API key using Google Colab Secrets.
+3. Initialize the ChatGroq model.
+4. Create the EduPredictAI SYSTEM prompt.
+5. Build the prompt template and chain.
+6. Create tests.csv with 10 questions.
+7. Execute the automated tests.
+8. Improve the SYSTEM prompt.
+9. Compare the test pass rates.
+10. Change temperature to 1.0 and test twice.
+11. Classify business tasks as Plain Code, LLM Call, or Agent.
 
 ## Learning Outcomes
 
-After completing this practical, I learned:
+After completing Day 4, I learned:
 
-1. How to create a system prompt for a specific application.
-2. How to connect an LLM using the Groq API.
-3. How to create a prompt chain using LangChain.
-4. How to evaluate AI responses using test cases.
-5. How to improve prompts based on test results.
-6. How temperature affects AI-generated responses.
-7. The difference between normal Python code, LLM calls, and AI agents.
-
-## How to Run the Project
-
-1. Open the `EduPredictAI_Day3.ipynb` notebook in Google Colab.
-2. Install the required package.
-3. Restart the runtime after installation.
-4. Execute the notebook cells in order.
-5. Enter your Groq API key when prompted.
-6. Create the model and system prompt.
-7. Run the AI assistant.
-8. Generate `tests.csv` and execute the automated tests.
-9. Compare the original and improved prompt results.
-10. Run the temperature experiment.
+- How to create a business-specific AI assistant using LangChain.
+- How to use SYSTEM prompts to control AI responses.
+- How to create and execute automated CSV-based tests.
+- How to improve prompts and compare their performance.
+- How temperature affects AI-generated responses.
+- The difference between Plain Code, One LLM Call, and an AI Agent.
 
 ## Conclusion
 
-Through this Day 3 practical, I developed a basic AI-powered assistant for EduPredictAI using Python, LangChain, and Groq.
-
-I learned how prompts guide an LLM, how chains connect different components, and how automated testing helps evaluate AI responses. I also explored how temperature changes response generation and understood where an AI agent can be useful in a student performance analysis application.
+Successfully prepared an AI-powered EduPredictAI assistant using LangChain and Groq. Created a custom business prompt, a 10-question testing dataset, an improved prompt, and a temperature experiment. Also identified different tasks that can be implemented using traditional Python code, LLM calls, and AI agents.
 
 ---
 
-**Project:** EduPredictAI – Day 3  
-**Workshop:** AI Agents Workshop  
-**Environment:** Google Colab  
-**Language:** Python
+**Project:** EduPredictAI  
+**Day:** 4  
+**Focus:** LangChain, Prompt Engineering, Testing and AI Agents  
+**Environment:** Google Colab
